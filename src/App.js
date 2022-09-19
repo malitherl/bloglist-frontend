@@ -18,9 +18,7 @@ const Notification = ({message}) => {
         border: "1px solid yellowgreen",
         color: "yellowgreen"
       }
-    }
-
-  
+    }  
     return(
       <div className='notification' style={notifStyle}>
         {message}
@@ -72,7 +70,8 @@ const Persons = ({filter, persons, removeData}) => {
               <p key={person.name}>{person.name} {person.number} 
               <button onClick={handleClick} name={person.name} id={person.id}> delete </button>
               </p>)}
-    </div>)
+    </div>
+  )
 }
 
 const App = () => {
@@ -89,6 +88,15 @@ const App = () => {
     )  
   }, [])
 
+  useEffect(() => {
+    const JSONuser = localStorage.getItem('blogUser')
+    if(JSONuser){
+      const user = JSON.parse(JSONuser);
+      setUser(user)
+      blogService.setToken(user.token);
+    }
+  }, [])
+
 
   const handleLogin = async (event) => {
     event.preventDefault(); 
@@ -100,12 +108,15 @@ const App = () => {
         username, password
       })
       setUser(user)
-      setUserName('')
-      setPassword('')
+      setUserName(username)
+      setPassword(password)
       localStorage.setItem('username', username)
       localStorage.setItem('password', password)
+      localStorage.setItem('blogUser', JSON.stringify(user));
+      blogService.setToken(user.token)
+      console.log(JSON)
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
+      setErrorMessage('Error: Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -113,13 +124,13 @@ const App = () => {
   }
 
   const handleLogout = async (event) => {
-    event.preventDefault();
     console.log('logging out');
     try {
       setUser(null);
       setUserName('')
       setPassword('')
       localStorage.clear();
+      localStorage.removeItem('blogUser');
     } catch (e){
       setErrorMessage(e)
       setTimeout(() => {
@@ -136,13 +147,18 @@ const App = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+      <Notification message={errorMessage} />
         { user && 
           <div>
+            <p>welcome, {username}</p>
                <button 
-                  type='reset' 
-                  onReset={handleLogout}>
+                  type='button' 
+                  onClick={handleLogout}>
                       Logout
                 </button>
+              <div>
+                
+                </div>
           </div>
         }
 
@@ -152,7 +168,7 @@ const App = () => {
               username: 
               <input
                 type="text"
-                value={value}
+                value={username}
                 placeholder="Username"
                 onChange={({target}) => setUserName(target.value)}
               />
@@ -161,7 +177,7 @@ const App = () => {
               password: 
                 <input
                   type="text"
-                  value={value}
+                  value={password}
                   placeholder="Password"
                   onChange={({target}) => setPassword(target.value)}
                 />
