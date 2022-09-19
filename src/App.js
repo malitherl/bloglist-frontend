@@ -27,60 +27,20 @@ const Notification = ({message}) => {
   }
 }
 
-const Filter = (props) => {
-  return(
-    <p>
-      Filter: <input value = {props.filter} onChange={props.onChange}/>
-    </p>
-  )
-}
-
-const PersonForm = (props) => {
-  return(
-    <div>
-      <h3>Add a new...</h3>
-          <form onSubmit={props.handleSubmit}>
-            Name   
-            <input value={props.newName} onChange={props.handleNameChange} /> 
-            <p>
-              Phone  
-              <input value={props.newPhone} onChange={props.handlePhoneChange} />
-              <button type="submit">add</button>
-            </p>
-          </form>
-    </div>
-  )
-}
-
-
-const Persons = ({filter, persons, removeData}) => {
-
-  const handleClick = (event) => {
-    const {name, id} = event.target; 
-    if(window.confirm(`Are you sure you want to delete ${name}?`)){
-      removeData(id);
-    }
-  } 
-  return (
-    <div>
-      <h2>Numbers</h2>
-      { persons
-          .filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-          .map(person => 
-              <p key={person.name}>{person.name} {person.number} 
-              <button onClick={handleClick} name={person.name} id={person.id}> delete </button>
-              </p>)}
-    </div>
-  )
-}
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
+
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
+
   const [errorMessage, setErrorMessage] = useState(null)
+  
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -100,7 +60,6 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault(); 
-
     console.log('logging in with', username, password);
 
     try{
@@ -114,7 +73,6 @@ const App = () => {
       localStorage.setItem('password', password)
       localStorage.setItem('blogUser', JSON.stringify(user));
       blogService.setToken(user.token)
-      console.log(JSON)
     } catch (exception) {
       setErrorMessage('Error: Wrong credentials')
       setTimeout(() => {
@@ -140,6 +98,34 @@ const App = () => {
 
   }
 
+  const handleBlogSubmit = async (event) => {
+    event.preventDefault();
+    console.log('attemption to add new blog'); 
+    console.log(newTitle, newAuthor, newUrl);
+    try {
+      const blog = {
+        "title": newTitle,
+        "author": newAuthor, 
+        "url": newUrl,
+        "likes": 0
+      }
+      const response = blogService.create(blog) 
+      
+
+    } catch (e) {
+      setErrorMessage(e)
+      setTimeout(()=> {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  
+  const handleTitleChange = (event) => setNewTitle(event.target.value)
+  const handleAuthorChange = (event) => setNewAuthor(event.target.value)
+  const handleUrlChange = (event) => setNewUrl(event.target.value)
+
+
 
   return (
     <div>
@@ -148,7 +134,7 @@ const App = () => {
         <Blog key={blog.id} blog={blog} />
       )}
       <Notification message={errorMessage} />
-        { user && 
+      { user && 
           <div>
             <p>welcome, {username}</p>
                <button 
@@ -156,12 +142,22 @@ const App = () => {
                   onClick={handleLogout}>
                       Logout
                 </button>
-              <div>
-                
-                </div>
-          </div>
-        }
-
+                <h3>Add a new...</h3>
+          <form onSubmit={handleBlogSubmit}>
+            Title   
+            <input value={newTitle} onChange={handleTitleChange} required={true}/> 
+            <br/>
+            Author  
+            <input value={newAuthor} onChange={handleAuthorChange} required={true}/>
+            <br/>
+            Blog Url 
+            <input value={newUrl} onChange={handleUrlChange} required={true}/>
+            <button type="submit">create new blog</button>  
+          </form>
+          
+         </div>
+        } 
+        
         { !user && 
             <form onSubmit={handleLogin}>
             <div>
