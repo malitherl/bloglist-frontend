@@ -1,117 +1,11 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import BlogForm from './components/BlogForm'
+import Notification from './components/Notification'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const Notification = ({message}) => {
-  if(message == null){
-    return null
-  } else {
-    let notifStyle = {}
-    if(message.toLowerCase().includes('error')){
-       notifStyle = {
-        border: "1px solid red",
-        color: "red"
-      }
-    } else {
-      notifStyle = {
-        border: "1px solid yellowgreen",
-        color: "yellowgreen"
-      }
-    }  
-    return(
-      <div className='notification' style={notifStyle}>
-        {message}
-      </div>
-    )
-  }
-}
-
-const LoginForm = ({ 
-  username,
-  password,
-  handleLogin, 
-  handleUsernameChange, 
-  handlePasswordChange, 
-}) => {
-  
-return(
-  <form onSubmit={handleLogin}>
-  <div>
-    username: 
-    <input
-      type="text"
-      value={username}
-      placeholder="Username"
-      onChange={handleUsernameChange}
-    />
-  </div>
-  <div>
-    password: 
-      <input
-        type="text"
-        value={password}
-        placeholder="Password"
-        onChange={handlePasswordChange}
-      />
-  </div>
-  <button type='submit'>Login</button>
-</form>
-)}
-
-const Togglable = (props) => {
-  
-  const [toggle, setToggle] = useState(false)
-
-  const showWhenVisible = { display: toggle ? '' : 'none'}
-  const hideWhenVisible = { display: toggle ? 'none' : ''}
-
-  const handleToggle = (() => setToggle(!toggle))
-
-
-  return (
-    <div>
-        <div style={hideWhenVisible}>
-          <button onClick={handleToggle}>{props.buttonLabel}</button>
-        </div>
-        <div style={showWhenVisible}>
-          {props.children}
-        </div>
-        <button onClick={handleToggle}>cancel</button>
-    </div>
-  )
-}
-
-
-const BlogForm = (
-  {
-    newAuthor,
-    newTitle,
-    newUrl,
-    handleAuthorChange,
-    handleTitleChange,
-    handleUrlChange,
-    handleBlogSubmit
-  }) => {
-
-  return (
-    <div>
-      <form onSubmit={handleBlogSubmit}>
-            Title   
-            <input value={newTitle} onChange={handleTitleChange} required={true}/> 
-            <br/>
-            Author  
-            <input value={newAuthor} onChange={handleAuthorChange} required={true}/>
-            <br/>
-            Blog Url 
-            <input value={newUrl} onChange={handleUrlChange} required={true}/>
-            <button type="submit">create new blog</button>  
-          </form>
-    </div>
-  )
-
-  }
-
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -194,7 +88,7 @@ const App = () => {
         "likes": 0
       }
       const response = blogService.create(blog) 
-      
+      console.log(response)
 
     } catch (e) {
       setErrorMessage(e)
@@ -233,7 +127,8 @@ const App = () => {
                     newUrl={newUrl}
                     handleTitleChange={handleTitleChange}
                     handleAuthorChange={handleAuthorChange}
-                    handleUrlChange={handleUrlChange}                  
+                    handleUrlChange={handleUrlChange}       
+                    handleBlogSubmit={handleBlogSubmit}           
                   />
                 </Togglable>
            </div>
@@ -247,10 +142,11 @@ const App = () => {
                   handlePasswordChange={handlePasswordChange} 
                   handleUsernameChange={handleUsernameChange} />
           </Togglable>
-
         }
         
-        
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} />
+        )}
        
         
     </div>
