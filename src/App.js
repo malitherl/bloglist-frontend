@@ -31,7 +31,7 @@ const LoginForm = ({
   username,
   password,
   handleLogin, 
-  handleAuthorChange, 
+  handleUsernameChange, 
   handlePasswordChange, 
 }) => {
   
@@ -43,7 +43,7 @@ return(
       type="text"
       value={username}
       placeholder="Username"
-      onChange={handleAuthorChange}
+      onChange={handleUsernameChange}
     />
   </div>
   <div>
@@ -57,10 +57,7 @@ return(
   </div>
   <button type='submit'>Login</button>
 </form>
-)
-
-
-}
+)}
 
 const Togglable = (props) => {
   
@@ -82,17 +79,38 @@ const Togglable = (props) => {
         </div>
         <button onClick={handleToggle}>cancel</button>
     </div>
-
-
   )
-
 }
 
 
+const BlogForm = (
+  {
+    newAuthor,
+    newTitle,
+    newUrl,
+    handleAuthorChange,
+    handleTitleChange,
+    handleUrlChange,
+    handleBlogSubmit
+  }) => {
 
+  return (
+    <div>
+      <form onSubmit={handleBlogSubmit}>
+            Title   
+            <input value={newTitle} onChange={handleTitleChange} required={true}/> 
+            <br/>
+            Author  
+            <input value={newAuthor} onChange={handleAuthorChange} required={true}/>
+            <br/>
+            Blog Url 
+            <input value={newUrl} onChange={handleUrlChange} required={true}/>
+            <button type="submit">create new blog</button>  
+          </form>
+    </div>
+  )
 
-
-
+  }
 
 
 const App = () => {
@@ -108,7 +126,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [toggleLogin, setToggleLogin] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -150,7 +167,6 @@ const App = () => {
   }
 
   const handleLogout = async (event) => {
-    console.log('logging out');
     try {
       setUser(null);
       setUserName('')
@@ -197,37 +213,12 @@ const App = () => {
   const handleUrlChange = (event) => setNewUrl(event.target.value)
 
 
-  const loginForm = () => {
-    const showWhenVisible = { display: toggleLogin ? '' : 'none'}
-    const hideWhenVisible = { display: toggleLogin ? 'none' : ''}
-    console.log(toggleLogin)
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={()=> setToggleLogin(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm 
-                handleLogin={handleLogin} 
-                handlePasswordChange={handlePasswordChange} 
-                handleUsernameChange={handleUsernameChange} 
-              />
-        </div>
-        <button onClick={()=> setToggleLogin(false)}>cancel</button>
-
-
-      </div>
-    )
-
-
-  }
-
 
   return (
     <div>
      
       <Notification message={errorMessage} />
-      {/* { user && 
+       { user && 
           <div>
             <p>welcome, {username}</p>
                <button 
@@ -235,28 +226,32 @@ const App = () => {
                   onClick={handleLogout}>
                       Logout
                 </button>
-                <h3>Add a new...</h3>
-          <form onSubmit={handleBlogSubmit}>
-            Title   
-            <input value={newTitle} onChange={handleTitleChange} required={true}/> 
-            <br/>
-            Author  
-            <input value={newAuthor} onChange={handleAuthorChange} required={true}/>
-            <br/>
-            Blog Url 
-            <input value={newUrl} onChange={handleUrlChange} required={true}/>
-            <button type="submit">create new blog</button>  
-          </form>
-          
-         </div>
-        }  */}
+                <Togglable buttonLabel={'create new blog?'}>
+                  <BlogForm
+                    newTitle={newTitle}
+                    newAuthor={newAuthor}
+                    newUrl={newUrl}
+                    handleTitleChange={handleTitleChange}
+                    handleAuthorChange={handleAuthorChange}
+                    handleUrlChange={handleUrlChange}                  
+                  />
+                </Togglable>
+           </div>
+        }  
+        {
+          !user && 
+
+          <Togglable buttonLabel={'login'}>
+            <LoginForm  
+                  handleLogin={handleLogin} 
+                  handlePasswordChange={handlePasswordChange} 
+                  handleUsernameChange={handleUsernameChange} />
+          </Togglable>
+
+        }
         
-        <Togglable buttonLabel={'login'}>
-          <LoginForm  
-                handleLogin={handleLogin} 
-                handlePasswordChange={handlePasswordChange} 
-                handleUsernameChange={handleUsernameChange} />
-        </Togglable>
+        
+       
         
     </div>
   )
