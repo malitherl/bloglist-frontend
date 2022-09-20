@@ -27,6 +27,73 @@ const Notification = ({message}) => {
   }
 }
 
+const LoginForm = ({ 
+  username,
+  password,
+  handleLogin, 
+  handleAuthorChange, 
+  handlePasswordChange, 
+}) => {
+  
+return(
+  <form onSubmit={handleLogin}>
+  <div>
+    username: 
+    <input
+      type="text"
+      value={username}
+      placeholder="Username"
+      onChange={handleAuthorChange}
+    />
+  </div>
+  <div>
+    password: 
+      <input
+        type="text"
+        value={password}
+        placeholder="Password"
+        onChange={handlePasswordChange}
+      />
+  </div>
+  <button type='submit'>Login</button>
+</form>
+)
+
+
+}
+
+const Togglable = (props) => {
+  
+  const [toggle, setToggle] = useState(false)
+
+  const showWhenVisible = { display: toggle ? '' : 'none'}
+  const hideWhenVisible = { display: toggle ? 'none' : ''}
+
+  const handleToggle = (() => setToggle(!toggle))
+
+
+  return (
+    <div>
+        <div style={hideWhenVisible}>
+          <button onClick={handleToggle}>{props.buttonLabel}</button>
+        </div>
+        <div style={showWhenVisible}>
+          {props.children}
+        </div>
+        <button onClick={handleToggle}>cancel</button>
+    </div>
+
+
+  )
+
+}
+
+
+
+
+
+
+
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -41,6 +108,7 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
+  const [toggleLogin, setToggleLogin] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -120,21 +188,46 @@ const App = () => {
     }
   }
 
+  const handleUsernameChange = (event) => setUserName(event.target.value)
+  const handlePasswordChange = (event) => setPassword(event.target.value)
+
   
   const handleTitleChange = (event) => setNewTitle(event.target.value)
   const handleAuthorChange = (event) => setNewAuthor(event.target.value)
   const handleUrlChange = (event) => setNewUrl(event.target.value)
 
 
+  const loginForm = () => {
+    const showWhenVisible = { display: toggleLogin ? '' : 'none'}
+    const hideWhenVisible = { display: toggleLogin ? 'none' : ''}
+    console.log(toggleLogin)
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={()=> setToggleLogin(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm 
+                handleLogin={handleLogin} 
+                handlePasswordChange={handlePasswordChange} 
+                handleUsernameChange={handleUsernameChange} 
+              />
+        </div>
+        <button onClick={()=> setToggleLogin(false)}>cancel</button>
+
+
+      </div>
+    )
+
+
+  }
+
 
   return (
     <div>
-      <h2>blogs</h2>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+     
       <Notification message={errorMessage} />
-      { user && 
+      {/* { user && 
           <div>
             <p>welcome, {username}</p>
                <button 
@@ -156,31 +249,14 @@ const App = () => {
           </form>
           
          </div>
-        } 
+        }  */}
         
-        { !user && 
-            <form onSubmit={handleLogin}>
-            <div>
-              username: 
-              <input
-                type="text"
-                value={username}
-                placeholder="Username"
-                onChange={({target}) => setUserName(target.value)}
-              />
-            </div>
-            <div>
-              password: 
-                <input
-                  type="text"
-                  value={password}
-                  placeholder="Password"
-                  onChange={({target}) => setPassword(target.value)}
-                />
-            </div>
-            <button type='submit'>Login</button>
-          </form>
-        }
+        <Togglable buttonLabel={'login'}>
+          <LoginForm  
+                handleLogin={handleLogin} 
+                handlePasswordChange={handlePasswordChange} 
+                handleUsernameChange={handleUsernameChange} />
+        </Togglable>
         
     </div>
   )
