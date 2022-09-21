@@ -27,5 +27,16 @@ const update = async ( id, blog ) => {
   return  response.data
 }
 
+const remove = async (id) => {
+  console.log(id);
+  const othereq = await axios.get(`${baseUrl}/${id}`)
+  console.log(othereq.data)
+  const config = {
+    headers: {'Authorization': token},
+  }
+  await axios.delete(`${baseUrl}/${id}`, config)
+}
 
-export default { getAll, create, update, setToken }
+
+
+export default { getAll, create, update, setToken, remove }

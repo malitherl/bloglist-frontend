@@ -3,9 +3,10 @@ import blogService from '../services/blogs'
 
 
 const Blog = ({blog}) => {
-  
+
 const [toggle, setToggle] = useState(false);
 const handleView = (() => setToggle(!toggle))
+
 const handleLike = async () => {
   try {
     const incLike = blog.likes
@@ -18,10 +19,27 @@ const handleLike = async () => {
     blog = updatedBlog;
   } catch (e) {
     console.log(e)
-  }
-  
+  }  
 }
+
+
+const handleDelete = async (event) => {
+  const blogToDelete = blog
+  if(window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)){
+    try {
+      const response = blogService.remove(event.target.id)
+      console.log(response)
+      console.log(blogToDelete)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+}
+
+
+
 const showView = { display: toggle ? '' : 'none'}
+const hideView = { display: toggle ? 'none' : ''}
 const blogStyle = {
   paddingTop: 10,
   paddingLeft: 2,
@@ -33,11 +51,11 @@ const blogStyle = {
 
 return(
   <div style={blogStyle}>
-    {blog.title} by {blog.author} <button onClick={handleView}>view</button>
-    <div style={showView}>
+    {blog.title} by {blog.author}<button style= {hideView} onClick={handleView}>view</button>
+    <div style={showView}><button onClick={handleView}>hide</button>
       <p>url: {blog.url}</p>
       <p>likes: {blog.likes} <button onClick={handleLike}>like</button></p>
-      <button onClick={handleView}>hide</button>
+      <button id= {blog.id} onClick={handleDelete}>remove</button>
     </div>
   </div>  
   )
