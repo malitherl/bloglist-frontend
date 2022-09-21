@@ -114,7 +114,7 @@ const App = () => {
       <Notification message={errorMessage} />
        { user && 
           <div>
-            <p>welcome, {username}</p>
+            <p>welcome, {localStorage.getItem('username')}</p>
                <button 
                   type='button' 
                   onClick={handleLogout}>
