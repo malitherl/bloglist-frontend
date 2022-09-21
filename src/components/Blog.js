@@ -34,7 +34,6 @@ const blogStyle = {
 return(
   <div style={blogStyle}>
     {blog.title} by {blog.author} <button onClick={handleView}>view</button>
-    
     <div style={showView}>
       <p>url: {blog.url}</p>
       <p>likes: {blog.likes} <button onClick={handleLike}>like</button></p>
