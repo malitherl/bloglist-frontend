@@ -15,7 +15,7 @@ const App = () => {
   const [newUrl, setNewUrl] = useState('')
 
   const [errorMessage, setErrorMessage] = useState(null)
-  
+
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -23,13 +23,13 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+      setBlogs(blogs)
+    )
   }, [])
 
   useEffect(() => {
     const JSONuser = localStorage.getItem('blogUser')
-    if(JSONuser){
+    if (JSONuser) {
       const user = JSON.parse(JSONuser);
       setUser(user)
       blogService.setToken(user.token);
@@ -38,10 +38,10 @@ const App = () => {
 
 
   const handleLogin = async (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
     console.log('logging in with', username, password);
 
-    try{
+    try {
       const user = await loginService.login({
         username, password
       })
@@ -60,14 +60,14 @@ const App = () => {
     }
   }
 
-  const handleLogout = async (event) => {
+  const handleLogout = async () => {
     try {
       setUser(null);
       setUserName('')
       setPassword('')
       localStorage.clear();
       localStorage.removeItem('blogUser');
-    } catch (e){
+    } catch (e) {
       setErrorMessage(e)
       setTimeout(() => {
         setErrorMessage(null)
@@ -78,21 +78,21 @@ const App = () => {
 
   const handleBlogSubmit = async (event) => {
     event.preventDefault();
-    console.log('attemption to add new blog'); 
+    console.log('attemption to add new blog');
     console.log(newTitle, newAuthor, newUrl);
     try {
       const blog = {
-        "title": newTitle,
-        "author": newAuthor, 
-        "url": newUrl,
-        "likes": 0
+        'title': newTitle,
+        'author': newAuthor,
+        'url': newUrl,
+        'likes': 0
       }
-      const response = blogService.create(blog) 
+      const response = blogService.create(blog)
       console.log(response)
 
     } catch (e) {
       setErrorMessage(e)
-      setTimeout(()=> {
+      setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
@@ -101,7 +101,7 @@ const App = () => {
   const handleUsernameChange = (event) => setUserName(event.target.value)
   const handlePasswordChange = (event) => setPassword(event.target.value)
 
-  
+
   const handleTitleChange = (event) => setNewTitle(event.target.value)
   const handleAuthorChange = (event) => setNewAuthor(event.target.value)
   const handleUrlChange = (event) => setNewUrl(event.target.value)
@@ -110,44 +110,44 @@ const App = () => {
 
   return (
     <div>
-     
-      <Notification message={errorMessage} />
-       { user && 
-          <div>
-            <p>welcome, {localStorage.getItem('username')}</p>
-               <button 
-                  type='button' 
-                  onClick={handleLogout}>
-                      Logout
-                </button>
-                <Togglable buttonLabel={'create new blog?'}>
-                  <BlogForm
-                    newTitle={newTitle}
-                    newAuthor={newAuthor}
-                    newUrl={newUrl}
-                    handleTitleChange={handleTitleChange}
-                    handleAuthorChange={handleAuthorChange}
-                    handleUrlChange={handleUrlChange}       
-                    handleBlogSubmit={handleBlogSubmit}           
-                  />
-                </Togglable>
-           </div>
-        }  
-        {
-          !user && 
 
-          <Togglable buttonLabel={'login'}>
-            <LoginForm  
-                  handleLogin={handleLogin} 
-                  handlePasswordChange={handlePasswordChange} 
-                  handleUsernameChange={handleUsernameChange} />
+      <Notification message={errorMessage} />
+      {user &&
+        <div>
+          <p>welcome, {localStorage.getItem('username')}</p>
+          <button
+            type='button'
+            onClick={handleLogout}>
+            Logout
+          </button>
+          <Togglable buttonLabel={'create new blog?'}>
+            <BlogForm
+              newTitle={newTitle}
+              newAuthor={newAuthor}
+              newUrl={newUrl}
+              handleTitleChange={handleTitleChange}
+              handleAuthorChange={handleAuthorChange}
+              handleUrlChange={handleUrlChange}
+              handleBlogSubmit={handleBlogSubmit}
+            />
           </Togglable>
-        }
-        
-        {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-          <Blog key={blog.id} blog={blog} />
-        )}
-       
+        </div>
+      }
+      {
+        !user &&
+
+        <Togglable buttonLabel={'login'}>
+          <LoginForm
+            handleLogin={handleLogin}
+            handlePasswordChange={handlePasswordChange}
+            handleUsernameChange={handleUsernameChange} />
+        </Togglable>
+      }
+
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
+
     </div>
   )
 }
