@@ -44,3 +44,22 @@ test('renders url and likes when \'view\' is clicked', async () => {
     const div = container.querySelector('.toggable')
     expect(div).not.toHaveStyle('display: none')
 })
+
+test('clicking like twice the handlelike prop event handler is called twice', async () => {
+    const blog = {
+        title: "I am a test",
+        author: "tester mcgee",
+        url: "am not real",
+        likes: 68
+    }
+    const mockHandler = jest.fn()
+    const user = userEvent.setup();
+
+    const {container} = render(<Blog blog={blog} handleLike={mockHandler}/>)
+    const buttons = container.querySelectorAll('.toggable button')
+    const likeButton = Array.from(buttons)[1]
+    await user.click(likeButton)
+    await user.click(likeButton)
+    expect(mockHandler.mock.calls).toHaveLength(2)
+
+})

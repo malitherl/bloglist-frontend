@@ -98,6 +98,37 @@ const App = () => {
     }
   }
 
+
+  const handleLike = async () => {
+    try {
+      const incLike = blog.likes
+      const id = blog.id
+      const updatedBlog = {
+        ...blog,
+        likes: incLike + 1
+      }
+      blogService.update(id, updatedBlog)
+      blog = updatedBlog;
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+
+  const handleDelete = async (event) => {
+    const blogToDelete = blog
+    if (window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)) {
+      try {
+        const response = blogService.remove(event.target.id)
+        console.log(response)
+        console.log(blogToDelete)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }
+
+
   const handleUsernameChange = (event) => setUserName(event.target.value)
   const handlePasswordChange = (event) => setPassword(event.target.value)
 
@@ -145,7 +176,7 @@ const App = () => {
       }
 
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
       )}
 
     </div>
