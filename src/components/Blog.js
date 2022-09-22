@@ -52,7 +52,7 @@ const Blog = ({ blog }) => {
   return (
     <div style={blogStyle}>
       {blog.title} by {blog.author}<button style={hideView} onClick={handleView}>view</button>
-      <div style={showView}><button onClick={handleView}>hide</button>
+      <div style={showView} className="toggable"><button onClick={handleView}>hide</button>
         <p>url: {blog.url}</p>
         <p>likes: {blog.likes} <button onClick={handleLike}>like</button></p>
         <button id={blog.id} onClick={handleDelete}>remove</button>
