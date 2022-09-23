@@ -76,20 +76,10 @@ const App = () => {
 
   }
 
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault();
-    console.log('attemption to add new blog');
-    console.log(newTitle, newAuthor, newUrl);
+  const createBlog = async (newBlog) => {
     try {
-      const blog = {
-        'title': newTitle,
-        'author': newAuthor,
-        'url': newUrl,
-        'likes': 0
-      }
-      const response = blogService.create(blog)
+      const response = blogService.create(newBlog)
       console.log(response)
-
     } catch (e) {
       setErrorMessage(e)
       setTimeout(() => {
@@ -97,6 +87,23 @@ const App = () => {
       }, 5000)
     }
   }
+
+  const updateBlog = async (blogToUpdate) => {
+    try {
+      const incLike = blog.likes
+      const id = blog.id
+      const updatedBlog = {
+        ...blog,
+        likes: incLike + 1
+      }
+      blogService.update(id, updatedBlog)
+      blog = updatedBlog;
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+
 
 
   const handleLike = async () => {
@@ -152,15 +159,7 @@ const App = () => {
             Logout
           </button>
           <Togglable buttonLabel={'create new blog?'}>
-            <BlogForm
-              newTitle={newTitle}
-              newAuthor={newAuthor}
-              newUrl={newUrl}
-              handleTitleChange={handleTitleChange}
-              handleAuthorChange={handleAuthorChange}
-              handleUrlChange={handleUrlChange}
-              handleBlogSubmit={handleBlogSubmit}
-            />
+            <BlogForm createBlog={createBlog} />
           </Togglable>
         </div>
       }

@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/extend-expect'
 import { getByText, render, screen } from '@testing-library/react'
 import userEvent from  '@testing-library/user-event'
 import Blog from '../components/Blog'
+import BlogForm from '../components/BlogForm'
 //lets test first to see if the Blog component is rendered 
 
 test('renders content', () => {
@@ -56,10 +57,36 @@ test('clicking like twice the handlelike prop event handler is called twice', as
     const user = userEvent.setup();
 
     const {container} = render(<Blog blog={blog} handleLike={mockHandler}/>)
-    const buttons = container.querySelectorAll('.toggable button')
-    const likeButton = Array.from(buttons)[1]
+    const likeButton = screen.getByText('like')
     await user.click(likeButton)
     await user.click(likeButton)
     expect(mockHandler.mock.calls).toHaveLength(2)
+})
+
+test('clicking \'handleBlogSubmit\' will call the event handler when the correct details are added to the blog form', async() => {
+    
+        
+    
+    const mockHandler = jest.fn();
+    const user = userEvent.setup();
+    const { container } = render(<BlogForm createBlog={mockHandler}/>)
+    screen.debug()
+    const input0 = screen.getByPlaceholderText('title')
+    const input1 = screen.getByPlaceholderText('author')
+    const input2 = screen.getByPlaceholderText('url')
+    const saveButton = screen.getByText('create new blog')
+    await user.type(input0, 'example title')
+    await user.type(input1, 'example author')
+    await user.type(input2, 'example url')
+    await user.click(saveButton)
+    screen.debug(input0)
+    screen.debug(input1)
+    screen.debug(input2)
+    
+    expect(mockHandler.mock.calls).toHaveLength(1)
+    expect(mockHandler.mock.calls[0][0].title).toBe('example title')
+    expect(mockHandler.mock.calls[0][0].author).toBe('example author')
+    expect(mockHandler.mock.calls[0][0].url).toBe('example url')
+    
 
 })
