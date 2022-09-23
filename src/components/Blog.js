@@ -15,22 +15,22 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  
+
   const handleLike = async (blog) => {
-      const incLike = blog.likes
-      const id = blog.id
-      const updatedBlog = {
-        ...blog,
-        likes: incLike + 1
-      } 
-      updateBlog(updatedBlog, id)
-      blog = updatedBlog;
+    const incLike = blog.likes
+    const id = blog.id
+    const updatedBlog = {
+      ...blog,
+      likes: incLike + 1
+    }
+    updateBlog(updatedBlog, id)
+    blog = updatedBlog;
   }
   const handleDelete = async (event) => {
-    const id  = event.target.id
+    const id = event.target.id
     deleteBlog(id)
-      
-    
+
+
   }
 
 
