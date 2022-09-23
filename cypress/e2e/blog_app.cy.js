@@ -12,5 +12,28 @@ describe('blog app', function() {
     })
 })
 
+describe('login', function(){
+    beforeEach(function () {
+        cy.visit('http://localhost:3000')
+    })
+    it('succeeds with correct credentials', ()=> {
+        cy.contains('login').click()
+        cy.get('input:first').type('mich')
+        cy.get('input:last').type('right')
+        cy.contains('Login').click()
+        cy.contains('welcome, mich')
+    })
+    it('fails with incorrect credentials', () => {
+        cy.contains('login').click()
+        cy.get('input:first').type('mchi')
+        cy.get('input:last').type('right')
+        cy.contains('Login').click()
+        cy.contains('Error: Wrong credentials')
+    })
+
+})
+
+
+
 
 
