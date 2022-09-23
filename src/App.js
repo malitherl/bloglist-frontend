@@ -9,13 +9,7 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-
   const [errorMessage, setErrorMessage] = useState(null)
-
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -88,63 +82,31 @@ const App = () => {
     }
   }
 
-  const updateBlog = async (blogToUpdate) => {
+  const updateBlog = async (updatedBlog, id) => {
     try {
-      const incLike = blog.likes
-      const id = blog.id
-      const updatedBlog = {
-        ...blog,
-        likes: incLike + 1
-      }
       blogService.update(id, updatedBlog)
-      blog = updatedBlog;
     } catch (e) {
-      console.log(e)
+      setErrorMessage(e)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
-
-
-
-  const handleLike = async () => {
+  const deleteBlog = async (id) => {
     try {
-      const incLike = blog.likes
-      const id = blog.id
-      const updatedBlog = {
-        ...blog,
-        likes: incLike + 1
-      }
-      blogService.update(id, updatedBlog)
-      blog = updatedBlog;
+      const response = blogService.remove(id)
+      console.log(response)
     } catch (e) {
-      console.log(e)
+      setErrorMessage(e)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
-
-
-  const handleDelete = async (event) => {
-    const blogToDelete = blog
-    if (window.confirm(`Are you sure you want to delete ${blog.title} by ${blog.author}`)) {
-      try {
-        const response = blogService.remove(event.target.id)
-        console.log(response)
-        console.log(blogToDelete)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-  }
-
 
   const handleUsernameChange = (event) => setUserName(event.target.value)
   const handlePasswordChange = (event) => setPassword(event.target.value)
-
-
-  const handleTitleChange = (event) => setNewTitle(event.target.value)
-  const handleAuthorChange = (event) => setNewAuthor(event.target.value)
-  const handleUrlChange = (event) => setNewUrl(event.target.value)
-
-
 
   return (
     <div>
@@ -175,7 +137,7 @@ const App = () => {
       }
 
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
+        <Blog key={blog.id} blog={blog} updateBlog= {updateBlog} deleteBlog={deleteBlog} />
       )}
 
     </div>

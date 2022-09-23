@@ -65,8 +65,6 @@ test('clicking like twice the handlelike prop event handler is called twice', as
 
 test('clicking \'handleBlogSubmit\' will call the event handler when the correct details are added to the blog form', async() => {
     
-        
-    
     const mockHandler = jest.fn();
     const user = userEvent.setup();
     const { container } = render(<BlogForm createBlog={mockHandler}/>)

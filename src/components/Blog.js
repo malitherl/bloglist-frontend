@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 
-const Blog = ({ blog, handleLike, handleDelete }) => {
+const Blog = ({ blog, updateBlog, deleteBlog }) => {
 
   const [toggle, setToggle] = useState(false);
   const handleView = (() => setToggle(!toggle))
@@ -14,6 +14,23 @@ const Blog = ({ blog, handleLike, handleDelete }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
+  }
+  
+  const handleLike = async (blog) => {
+      const incLike = blog.likes
+      const id = blog.id
+      const updatedBlog = {
+        ...blog,
+        likes: incLike + 1
+      } 
+      updateBlog(updatedBlog, id)
+      blog = updatedBlog;
+  }
+  const handleDelete = async (event) => {
+    const id  = event.target.id
+    deleteBlog(id)
+      
+    
   }
 
 
