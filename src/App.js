@@ -69,16 +69,28 @@ const App = () => {
 
   }
 
-  const createBlog = async (newBlog) => {
-    try {
-      const response = await blogService.create(newBlog)
-      console.log(response)
-    } catch (e) {
-      setErrorMessage(e)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+  const createBlog = async (event) => {
+    event.preventDefault();
+    console.log(event.target.title.value)
+    const newBlog = {
+      'title': event.target.title.value,
+      'author': event.target.author.value,
+      'url': event.target.url.value,
+      'likes': 0
     }
+    blogService
+      .create(newBlog)
+      .then(returnedBlog => {
+        const addedBlog = [...blogs, returnedBlog]
+        setBlogs(addedBlog)
+      })
+      .catch((e) => {
+        setErrorMessage(e)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+
   }
 
   const updateBlog = async (id) => {
@@ -86,8 +98,15 @@ const App = () => {
     const updatedBlog = { ...blog, likes: blog.likes + 1 }
     blogService
       .update(id, updatedBlog)
-      .then(returnedBlog => {
-        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      .then(() => {
+        const mapping = blogs.map(blog => {
+          if (blog.id === id) {
+            return updatedBlog
+          } else {
+            return blog
+          }
+        })
+        setBlogs(mapping)
       })
       .catch((e) => {
         setErrorMessage(e)
@@ -99,19 +118,22 @@ const App = () => {
 
 
   const deleteBlog = async (id) => {
-    try {
-      const response = blogService.remove(id)
-      console.log(response)
-    } catch (e) {
-      setErrorMessage(e)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+    const deletedBlog = id
+    blogService
+      .remove(id)
+      .catch((e) => {
+        setErrorMessage(e)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+    const pruning = blogs.filter(blog => blog.id !== deletedBlog)
+    setBlogs(pruning)
   }
 
   const handleUsernameChange = (event) => setUserName(event.target.value)
   const handlePasswordChange = (event) => setPassword(event.target.value)
+
 
   return (
     <div>
@@ -140,10 +162,11 @@ const App = () => {
             handleUsernameChange={handleUsernameChange} />
         </Togglable>
       }
-
-      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog={() => updateBlog(blog.id)} deleteBlog={() => deleteBlog(blog.id)} />
-      )}
+      <div className='blogs'>
+        {blogs.map(blog =>
+          <Blog key={blog.id} blog={blog} updateBlog={() => updateBlog(blog.id)} deleteBlog={() => deleteBlog(blog.id)} />
+        )}
+      </div>
     </div>
   )
 }

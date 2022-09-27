@@ -16,21 +16,13 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     marginBottom: 5
   }
 
-  const handleDelete = async (event) => {
-    const id = event.target.id
-    await deleteBlog(id)
-
-
-  }
-
-
   return (
-    <div style={blogStyle}>
+    <div className="blogElement"style={blogStyle}>
       {blog.title} by {blog.author}<button style={hideView} onClick={handleView}>view</button>
       <div style={showView} className="toggable"><button onClick={handleView}>hide</button>
         <p>url: {blog.url}</p>
         <p>likes: {blog.likes} <button id={'like'} onClick={updateBlog}>like</button></p>
-        <button id={blog.id} onClick={handleDelete}>remove</button>
+        <button id={'delete'} onClick={deleteBlog}>remove</button>
       </div>
     </div>
   )

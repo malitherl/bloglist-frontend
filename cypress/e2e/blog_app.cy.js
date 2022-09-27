@@ -67,8 +67,19 @@ describe('when logged in', function() {
         cy.contains('new blog by michi')
         cy.contains('view').click()
         cy.get('#like').click()
-        cy.visit('http://localhost:3000') 
         cy.contains('likes: 1')
+    })
+    it('can delete a blog it created', function () {
+        cy.contains('create new blog?').click()
+        cy.get('#title').type('new blog')
+        cy.get('#author').type('michi')
+        cy.get('#url').type('nowhere')
+        cy.get('#save').click()
+        cy.contains('new blog by michi')
+        cy.contains('view').click()
+        cy.get('#delete').click()
+        cy.get('.blogElement').should('have.length', 0)
+
     })
 })
 
