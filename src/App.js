@@ -14,7 +14,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs(blogs)
@@ -72,7 +71,7 @@ const App = () => {
 
   const createBlog = async (newBlog) => {
     try {
-      const response = blogService.create(newBlog)
+      const response = await blogService.create(newBlog)
       console.log(response)
     } catch (e) {
       setErrorMessage(e)
@@ -82,16 +81,22 @@ const App = () => {
     }
   }
 
-  const updateBlog = async (updatedBlog, id) => {
-    try {
-      blogService.update(id, updatedBlog)
-    } catch (e) {
-      setErrorMessage(e)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
+  const updateBlog = async (id) => {
+    const blog = blogs.find(b => b.id === id)
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
+    blogService
+      .update(id, updatedBlog)
+      .then(returnedBlog => {
+        setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
+      })
+      .catch((e) => {
+        setErrorMessage(e)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
   }
+
 
   const deleteBlog = async (id) => {
     try {
@@ -137,9 +142,8 @@ const App = () => {
       }
 
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} updateBlog= {updateBlog} deleteBlog={deleteBlog} />
+        <Blog key={blog.id} blog={blog} updateBlog={() => updateBlog(blog.id)} deleteBlog={() => deleteBlog(blog.id)} />
       )}
-
     </div>
   )
 }

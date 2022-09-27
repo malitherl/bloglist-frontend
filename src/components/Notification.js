@@ -1,6 +1,8 @@
 const Notification = ({ message }) => {
   if (message === null) {
     return null
+  } else if (!message) {
+    return null
   } else {
     let notifStyle = {}
     if (message.toLowerCase().includes('error')) {

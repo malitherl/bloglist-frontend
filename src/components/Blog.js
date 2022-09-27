@@ -16,19 +16,9 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
     marginBottom: 5
   }
 
-  const handleLike = async (blog) => {
-    const incLike = blog.likes
-    const id = blog.id
-    const updatedBlog = {
-      ...blog,
-      likes: incLike + 1
-    }
-    updateBlog(updatedBlog, id)
-    blog = updatedBlog;
-  }
   const handleDelete = async (event) => {
     const id = event.target.id
-    deleteBlog(id)
+    await deleteBlog(id)
 
 
   }
@@ -39,7 +29,7 @@ const Blog = ({ blog, updateBlog, deleteBlog }) => {
       {blog.title} by {blog.author}<button style={hideView} onClick={handleView}>view</button>
       <div style={showView} className="toggable"><button onClick={handleView}>hide</button>
         <p>url: {blog.url}</p>
-        <p>likes: {blog.likes} <button onClick={handleLike}>like</button></p>
+        <p>likes: {blog.likes} <button id={'like'} onClick={updateBlog}>like</button></p>
         <button id={blog.id} onClick={handleDelete}>remove</button>
       </div>
     </div>
