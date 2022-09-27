@@ -79,8 +79,28 @@ describe('when logged in', function() {
         cy.contains('view').click()
         cy.get('#delete').click()
         cy.get('.blogElement').should('have.length', 0)
+    })
+    it('checks to see if blogs are ordered by likes', function() {
+        cy.contains('create new blog?').click()
+        cy.get('#title').type('The title with the most likes')
+        cy.get('#author').type('michi')
+        cy.get('#url').type('nowhere')
+        cy.get('#save').click()
+        cy.contains('view').click()
+        cy.get('#like').click()
+        cy.contains('likes: 1')
+        cy.visit('http://localhost:3000') 
+        cy.contains('create new blog?').click()
+        cy.get('#title').type('The title with the second most likes')
+        cy.get('#author').type('michi')
+        cy.get('#url').type('nowhere')
+        cy.get('#save').click()
+        cy.visit('http://localhost:3000') 
+        cy.get('.blogElement').eq(0).should('contain', 'The title with the most likes')
+        cy.get('.blogElement').eq(1).should('contain', 'The title with the second most likes')
 
     })
+
 })
 
 
