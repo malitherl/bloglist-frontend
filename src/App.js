@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useDispatch } from 'react-redux'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -6,6 +7,7 @@ import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import notificationReducer from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -13,6 +15,8 @@ const App = () => {
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -83,12 +87,12 @@ const App = () => {
       .then(returnedBlog => {
         const addedBlog = [...blogs, returnedBlog]
         setBlogs(addedBlog)
+        dispatch(messageChange(`You have added ${quote}`))
+        setTimeout(() => dispatch(messageDefault('')), 5000)
       })
       .catch((e) => {
-        setErrorMessage(e)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        dispatch(messageChange(e))
+        setTimeout(() => dispatch(messageDefault('')), 5000)
       })
 
   }
@@ -138,7 +142,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <Notification/>
       {user &&
         <div>
           <p>welcome, {localStorage.getItem('username')}</p>

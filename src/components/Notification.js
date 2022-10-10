@@ -1,11 +1,15 @@
-const Notification = ({ message }) => {
-  if (message === null) {
+import { useSelector } from "react-redux"
+
+const Notification = () => {
+  const notification = useSelector(state => state)
+
+  if (notification.notification === null) {
     return null
-  } else if (!message) {
+  } else if (!notification.notification) {
     return null
   } else {
     let notifStyle = {}
-    if (message.toLowerCase().includes('error')) {
+    if (notification.notification.toLowerCase().includes('error')) {
       notifStyle = {
         border: '1px solid red',
         color: 'red'
@@ -18,7 +22,7 @@ const Notification = ({ message }) => {
     }
     return (
       <div className='notification' style={notifStyle}>
-        {message}
+        {notification.notification}
       </div>
     )
   }
