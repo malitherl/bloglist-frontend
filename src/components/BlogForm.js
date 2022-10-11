@@ -9,20 +9,6 @@ const BlogForm = ({ createBlog }) => {
   const handleAuthorChange = (event) => setNewAuthor(event.target.value)
   const handleUrlChange = (event) => setNewUrl(event.target.value)
 
-  // const handleBlogSubmit = async (event) => {
-  //   event.preventDefault();
-  //   console.log('attemption to add new blog');
-  //   console.log(newTitle, newAuthor, newUrl);
-  //   const blog = {
-  //     'title': newTitle,
-  //     'author': newAuthor,
-  //     'url': newUrl,
-  //     'likes': 0
-  //   }
-  //   createBlog(blog)
-  // }
-
-
   return (
     <div>
       <form onSubmit={createBlog}>

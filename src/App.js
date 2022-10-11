@@ -7,16 +7,15 @@ import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import notificationReducer from './reducers/notificationReducer'
+import { messageChange, messageDefault } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-
+  const dispatch = useDispatch()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -49,11 +48,9 @@ const App = () => {
       localStorage.setItem('password', password)
       localStorage.setItem('blogUser', JSON.stringify(user));
       blogService.setToken(user.token)
-    } catch (exception) {
-      setErrorMessage('Error: Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+    } catch (e) {
+      dispatch(messageChange(e))
+      setTimeout(() => dispatch(messageDefault('')), 5000)
     }
   }
 
@@ -65,10 +62,8 @@ const App = () => {
       localStorage.clear();
       localStorage.removeItem('blogUser');
     } catch (e) {
-      setErrorMessage(e)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(messageChange(e))
+      setTimeout(() => dispatch(messageDefault('')), 5000)
     }
 
   }
@@ -87,7 +82,7 @@ const App = () => {
       .then(returnedBlog => {
         const addedBlog = [...blogs, returnedBlog]
         setBlogs(addedBlog)
-        dispatch(messageChange(`You have added ${quote}`))
+        dispatch(messageChange(`You have added ${newBlog.title} by ${newBlog.author}`))
         setTimeout(() => dispatch(messageDefault('')), 5000)
       })
       .catch((e) => {
@@ -113,10 +108,8 @@ const App = () => {
         setBlogs(mapping)
       })
       .catch((e) => {
-        setErrorMessage(e)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        dispatch(messageChange(e))
+        setTimeout(() => dispatch(messageDefault('')), 5000)
       })
   }
 
@@ -126,10 +119,8 @@ const App = () => {
     blogService
       .remove(id)
       .catch((e) => {
-        setErrorMessage(e)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+        dispatch(messageChange(e))
+        setTimeout(() => dispatch(messageDefault('')), 5000)
       })
     const pruning = blogs.filter(blog => blog.id !== deletedBlog)
     setBlogs(pruning)
