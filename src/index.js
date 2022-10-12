@@ -4,10 +4,12 @@ import App from './App';
 import { Provider } from 'react-redux';
 import notificationReducer from './reducers/notificationReducer';
 import { configureStore } from '@reduxjs/toolkit';
+import blogReducer from './reducers/blogReducer';
 
 const store = configureStore({
   reducer: {
     notification: notificationReducer,
+    blog: blogReducer,
   },
 });
 

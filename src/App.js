@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Blog from './components/Blog'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
@@ -8,18 +8,17 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import { messageChange, messageDefault } from './reducers/notificationReducer'
+import { setBlogList } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
-
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      dispatch(setBlogList(blogs))
     )
   }, [])
 
@@ -32,6 +31,8 @@ const App = () => {
     }
   }, [])
 
+  const blogs = useSelector(state => state.blog)
+  const blogsCopy = blogs.slice()
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -80,8 +81,8 @@ const App = () => {
     blogService
       .create(newBlog)
       .then(returnedBlog => {
-        const addedBlog = [...blogs, returnedBlog]
-        setBlogs(addedBlog)
+        const updatedBlogList = [...blogs, returnedBlog]
+        dispatch(setBlogList(updatedBlogList))
         dispatch(messageChange(`You have added ${newBlog.title} by ${newBlog.author}`))
         setTimeout(() => dispatch(messageDefault('')), 5000)
       })
@@ -89,7 +90,6 @@ const App = () => {
         dispatch(messageChange(e))
         setTimeout(() => dispatch(messageDefault('')), 5000)
       })
-
   }
 
   const updateBlog = async (id) => {
@@ -105,7 +105,7 @@ const App = () => {
             return blog
           }
         })
-        setBlogs(mapping)
+        dispatch(setBlogList(mapping))
       })
       .catch((e) => {
         dispatch(messageChange(e))
@@ -123,7 +123,7 @@ const App = () => {
         setTimeout(() => dispatch(messageDefault('')), 5000)
       })
     const pruning = blogs.filter(blog => blog.id !== deletedBlog)
-    setBlogs(pruning)
+    dispatch(setBlogList(pruning))
   }
 
   const handleUsernameChange = (event) => setUserName(event.target.value)
@@ -158,7 +158,7 @@ const App = () => {
         </Togglable>
       }
       <div className='blogs'>
-        {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
+        {blogsCopy.sort((a,b) => b.likes - a.likes).map(blog =>
           <Blog key={blog.id} blog={blog} updateBlog={() => updateBlog(blog.id)} deleteBlog={() => deleteBlog(blog.id)} />
         )}
       </div>
