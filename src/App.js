@@ -9,11 +9,11 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import { messageChange, messageDefault } from './reducers/notificationReducer'
 import { setBlogList } from './reducers/blogReducer'
+import { setUser, logout } from './reducers/userReducer'
 
 const App = () => {
   const [username, setUserName] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
 
   const dispatch = useDispatch()
   useEffect(() => {
@@ -26,13 +26,16 @@ const App = () => {
     const JSONuser = localStorage.getItem('blogUser')
     if (JSONuser) {
       const user = JSON.parse(JSONuser);
-      setUser(user)
+      dispatch(setUser(user))
       blogService.setToken(user.token);
     }
   }, [])
 
   const blogs = useSelector(state => state.blog)
   const blogsCopy = blogs.slice()
+
+  const user = useSelector(state => state.user)
+  const userCopy = { ...user }
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -42,7 +45,7 @@ const App = () => {
       const user = await loginService.login({
         username, password
       })
-      setUser(user)
+      dispatch(setUser(user))
       setUserName(username)
       setPassword(password)
       localStorage.setItem('username', username)
@@ -57,7 +60,7 @@ const App = () => {
 
   const handleLogout = async () => {
     try {
-      setUser(null);
+      dispatch(logout())
       setUserName('')
       setPassword('')
       localStorage.clear();
@@ -134,7 +137,7 @@ const App = () => {
     <div>
       <h1>Blogs</h1>
       <Notification/>
-      {user &&
+      {userCopy &&
         <div>
           <p>welcome, {localStorage.getItem('username')}</p>
           <button
@@ -148,7 +151,7 @@ const App = () => {
         </div>
       }
       {
-        !user &&
+        !userCopy &&
 
         <Togglable buttonLabel={'login'}>
           <LoginForm
