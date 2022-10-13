@@ -13,6 +13,7 @@ import { messageChange, messageDefault } from './reducers/notificationReducer';
 import { setBlogList } from './reducers/blogReducer';
 import { setUser, logout } from './reducers/userReducer';
 import Users from './components/Users';
+import Navigation from './components/Navigation';
 
 const App = () => {
   const [username, setUserName] = useState('');
@@ -141,6 +142,7 @@ const App = () => {
     <div>
       <div className='blogs'>
         <Router>
+          <Navigation handleLogout={handleLogout} />
           {<Routes>
             <Route path='/' element={<Home blogs= {blogsCopy} user={userCopy} createBlog={createBlog}
               handleLogin={handleLogin} handleLogout={handleLogout}
