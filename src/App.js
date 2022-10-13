@@ -14,6 +14,7 @@ import { setBlogList } from './reducers/blogReducer';
 import { setUser, logout } from './reducers/userReducer';
 import Users from './components/Users';
 import Navigation from './components/Navigation';
+import LoginForm from './components/LoginForm';
 
 const App = () => {
   const [username, setUserName] = useState('');
@@ -142,7 +143,7 @@ const App = () => {
     <div>
       <div className='blogs'>
         <Router>
-          <Navigation handleLogout={handleLogout} />
+          <Navigation user= {userCopy} handleLogout={handleLogout} />
           {<Routes>
             <Route path='/' element={<Home blogs= {blogsCopy} user={userCopy} createBlog={createBlog}
               handleLogin={handleLogin} handleLogout={handleLogout}
@@ -155,6 +156,10 @@ const App = () => {
               ))
             }
             <Route path={'/users'} element= {<Users users = {users}/>} />
+            <Route path={'/login'} element= {<LoginForm
+              handleLogin={handleLogin}
+              handlePasswordChange={handlePasswordChange}
+              handleUsernameChange={handleUsernameChange}/>}/>
           </Routes>
           }
         </Router>
