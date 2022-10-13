@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  BrowserRouter as Router,
+  Routes, Route
+} from 'react-router-dom';
 import Blog from './components/Blog';
-import BlogForm from './components/BlogForm';
-import Notification from './components/Notification';
-import LoginForm from './components/LoginForm';
-import Togglable from './components/Togglable';
+import Home from './components/Home';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import userService from './services/users';
 import { messageChange, messageDefault } from './reducers/notificationReducer';
 import { setBlogList } from './reducers/blogReducer';
 import { setUser, logout } from './reducers/userReducer';
+import Users from './components/Users';
 
 const App = () => {
   const [username, setUserName] = useState('');
@@ -33,7 +35,7 @@ const App = () => {
 
   useEffect(() => {
     userService.getAll().then((users) => setUsers(users));
-  });
+  }, []);
 
   const blogs = useSelector((state) => state.blog);
   const blogsCopy = blogs.slice();
@@ -137,56 +139,23 @@ const App = () => {
 
   return (
     <div>
-      <h1>Blogs</h1>
-      <Notification />
-      {userCopy && (
-        <div>
-          <p>welcome, {localStorage.getItem('username')}</p>
-          <button type='button' onClick={handleLogout}>
-            Logout
-          </button>
-          <Togglable buttonLabel={'create new blog?'}>
-            <BlogForm createBlog={createBlog} />
-          </Togglable>
-        </div>
-      )}
-      {!userCopy && (
-        <Togglable buttonLabel={'login'}>
-          <LoginForm
-            handleLogin={handleLogin}
-            handlePasswordChange={handlePasswordChange}
-            handleUsernameChange={handleUsernameChange}
-          />
-        </Togglable>
-      )}
       <div className='blogs'>
-        {blogsCopy
-          .sort((a, b) => b.likes - a.likes)
-          .map((blog) => (
-            <Blog
-              key={blog.id}
-              blog={blog}
-              updateBlog={() => updateBlog(blog.id)}
-              deleteBlog={() => deleteBlog(blog.id)}
-            />
-          ))}
-      </div>
-      <div>
-        <h2>Users</h2>
-        <table>
-          <tbody>
-            <tr>
-              <th>name</th>
-              <th>blogs created</th>
-            </tr>
-            {users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.blogs.length}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <Router>
+          {<Routes>
+            <Route path='/' element={<Home blogs= {blogsCopy} user={userCopy} createBlog={createBlog}
+              handleLogin={handleLogin} handleLogout={handleLogout}
+              handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} />} />
+            {
+              blogsCopy.map((blog) => (
+                <Route path={`/blogs/${blog.id}`} key={blogsCopy.indexOf(blog)} element={
+                  <Blog key={blog.id} blog={blog} updateBlog={() => updateBlog(blog.id)} deleteBlog={() => deleteBlog(blog.id)} />}
+                />
+              ))
+            }
+            <Route path={'/users'} element= {<Users users = {users}/>} />
+          </Routes>
+          }
+        </Router>
       </div>
     </div>
   );
