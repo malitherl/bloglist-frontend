@@ -6,7 +6,7 @@ import notificationReducer from './reducers/notificationReducer';
 import { configureStore } from '@reduxjs/toolkit';
 import blogReducer from './reducers/blogReducer';
 import userReducer from './reducers/userReducer';
-
+import { Container } from '@mui/material'
 const store = configureStore({
   reducer: {
     notification: notificationReducer,
@@ -16,7 +16,9 @@ const store = configureStore({
 });
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <Provider store={store}>
-    <App />
-  </Provider>
+  <Container>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </Container>
 );

@@ -1,3 +1,4 @@
+import { TextField, Button } from '@mui/material';
 import PropTypes from 'prop-types';
 import React from 'react';
 const LoginForm = React.forwardRef(({
@@ -11,8 +12,8 @@ const LoginForm = React.forwardRef(({
   return (
     <form onSubmit={handleLogin}>
       <div>
-        username:
-        <input
+        <TextField
+          label="username"
           type="text"
           value={username}
           placeholder="Username"
@@ -20,15 +21,15 @@ const LoginForm = React.forwardRef(({
         />
       </div>
       <div>
-        password:
-        <input
+        <TextField
+          label="password"
           type="text"
           value={password}
           placeholder="Password"
           onChange={handlePasswordChange}
         />
       </div>
-      <button type='submit'>Login</button>
+      <Button type='submit'>Login</Button>
     </form>
   )
 })

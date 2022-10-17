@@ -12,12 +12,12 @@ const Home = ({
     <div>
       <h1>Blogs</h1>
       <Notification />
+      <BlogList blogs={blogs} />
       {user && (
         <Togglable buttonLabel={'create new blog?'}>
           <BlogForm createBlog={createBlog} />
         </Togglable>
       )}
-      <BlogList blogs={blogs} />
     </div>
   );
 };
